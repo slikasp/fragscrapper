@@ -99,54 +99,9 @@ func (s *FragScraper) GetFragranceParams(url string) (FragranceParams, error) {
 	return params, nil
 }
 
-// Get perfumes from user's wardrobe
-func (s *FragScraper) GetMemberWardrobe(id int) (map[string][]string, error) {
-	fragrances := make(map[string][]string)
-
-	shelves := make([]*goquery.Selection, 10)
-
-	wardrobeUrl := fmt.Sprintf("%s/member/%d#wardrobe", s.website, id)
-	customUrl := fmt.Sprintf("%s/member/%d#custom", s.website, id)
-
-	wardrobeDoc, err := s.getPageBody(wardrobeUrl)
-	if err != nil {
-		return fragrances, fmt.Errorf("Read wardrobe body failed: %s", err)
-	}
-	if wardrobeDoc == nil {
-		return fragrances, fmt.Errorf("Empty response body")
-	}
-	customDoc, err := s.getPageBody(customUrl)
-	if err != nil {
-		return fragrances, fmt.Errorf("Read custom body failed: %s", err)
-	}
-	if customDoc == nil {
-		return fragrances, fmt.Errorf("Empty response body")
-	}
-
-	wardrobeDoc.Find(`div[role="tabpanel"][data-headlessui-state="selected"]`).Find("div").Each(func(i int, item *goquery.Selection) {
-		shelves = append(shelves, item)
-	})
-
-	customDoc.Find(`div[role="tabpanel"][data-headlessui-state="selected"]`).Find("div").Each(func(i int, item *goquery.Selection) {
-		shelves = append(shelves, item)
-	})
-
-	for _, shelf := range shelves {
-		// there's text in the span after the h4 "(number_of_items)""
-		name := shelf.Find("h4").Clone().Find("span").Remove().End().Text()
-		shelf.Find(`div[name="flip-list"]`).Children().Each(func(i int, item *goquery.Selection) {
-			if href, ok := item.Find("a").Attr("href"); ok {
-				fragrances[name] = append(fragrances[name], href)
-			}
-		})
-	}
-
-	return fragrances, nil
-}
-
 // Get the perfumer country from the frag******a page
-func (s *FragScraper) getPerfumerCountry(perfumer string) (string, error) {
-	url := fmt.Sprintf("%s/%s.html", s.website, perfumer)
+func (s *FragScraper) GetPerfumerCountry(perfumer string) (string, error) {
+	url := fmt.Sprintf("%s/designers/%s.html", s.website, perfumer)
 
 	doc, err := s.getPageBody(url)
 	if err != nil {

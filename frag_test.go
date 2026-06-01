@@ -4,15 +4,6 @@ import (
 	"testing"
 )
 
-// func TestGetMemberWardrobe(t *testing.T) {
-
-// 	fs, err := NewFragScraper()
-// 	if err != nil {
-// 		t.Fatalf("Failed creating scraper: %s", err)
-// 	}
-
-// }
-
 func TestReadAndParse(t *testing.T) {
 
 	// url := "https://www.fragrantica.com/perfume/jean-paul-gaultier/le-male-pride-2024-90393.html"
@@ -55,7 +46,8 @@ func TestReadAndParse(t *testing.T) {
 		t.Errorf("want %v > %v", params.RatingCount, reflectionParams.RatingCount)
 	}
 
-	reflectionParams.RatingCount = reflectionParams.RatingCount
+	params.RatingValue = reflectionParams.RatingValue
+	params.RatingCount = reflectionParams.RatingCount
 
 	if params != reflectionParams {
 		t.Errorf("got %v\nwant %v", params, reflectionParams)
