@@ -131,6 +131,16 @@ func (s *FragScraper) GetMemberWardrobe(id int) (map[string][]string, error) {
 		shelves = append(shelves, item)
 	})
 
+	for _, shelf := range shelves {
+		// there's text in the span after the h4 "(number_of_items)""
+		name := shelf.Find("h4").Clone().Find("span").Remove().End().Text()
+		shelf.Find(`div[name="flip-list"]`).Children().Each(func(i int, item *goquery.Selection) {
+			if href, ok := item.Find("a").Attr("href"); ok {
+				fragrances[name] = append(fragrances[name], href)
+			}
+		})
+	}
+
 	return fragrances, nil
 }
 
